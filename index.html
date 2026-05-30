@@ -4,15 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>KHBB PHY · កាហ្វេ បាត់ដំបង</title>
-  <!-- Google Fonts: elegant Khmer & Latin -->
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Kantumruy+Pro:wght@300;400;500;600;700&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
       --milk: #FEF9E6;
       --milk-deep: #FBF3DF;
@@ -23,854 +17,159 @@
       --green-dark: #1F4120;
       --charcoal: #2C2B28;
       --gold-light: #D9B48B;
-      --shadow-sm: 0 12px 28px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.02);
+      --shadow-sm: 0 12px 28px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.02);
       --radius-card: 28px;
       --radius-md: 20px;
     }
+    body { background-color: var(--milk); font-family: 'Kantumruy Pro','Inter',system-ui,-apple-system,sans-serif; color: var(--charcoal); line-height: 1.4; }
+    .loading-overlay { position: fixed; top:0;left:0;width:100%;height:100%; background:var(--milk); z-index:1000; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:1rem; font-weight:500; color:var(--green-primary); }
+    .loading-spinner { width:44px;height:44px; border:3px solid var(--green-mint); border-top:3px solid var(--green-primary); border-radius:50%; animation:spin 0.8s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    #viewLogin,#viewCustomer,#viewAdmin { display:none; opacity:0; transition:opacity 0.2s ease; }
+    #viewLogin.active,#viewCustomer.active,#viewAdmin.active { display:block; opacity:1; }
 
-    body {
-      background-color: var(--milk);
-      font-family: 'Kantumruy Pro', 'Inter', system-ui, -apple-system, sans-serif;
-      color: var(--charcoal);
-      line-height: 1.4;
-    }
+    /* LOGIN */
+    .login-box { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:2rem 1.5rem; background:radial-gradient(circle at 10% 20%,var(--cream),var(--milk-deep)); }
+    .login-logo { font-family:'Cormorant Garamond',serif; font-size:3.8rem; font-weight:700; letter-spacing:-0.02em; background:linear-gradient(135deg,var(--green-primary),#4A784A); background-clip:text; -webkit-background-clip:text; color:transparent; margin-bottom:0.5rem; }
+    .login-tagline { font-size:0.85rem; text-transform:uppercase; letter-spacing:2px; color:var(--green-soft); border-bottom:1px solid var(--green-mint); display:inline-block; padding-bottom:6px; }
+    .login-ornament { width:48px; height:2px; background:var(--green-soft); margin:1rem auto; }
+    .login-card { background:white; border-radius:var(--radius-card); padding:2rem; width:100%; max-width:400px; margin:2rem 0 1.2rem; box-shadow:var(--shadow-sm); border:1px solid rgba(44,95,45,0.15); }
+    .login-input { width:100%; padding:14px 18px; border:1.5px solid #e2e6e0; border-radius:60px; font-size:1rem; background:white; transition:all 0.2s; margin-bottom:1.5rem; }
+    .login-input:focus { outline:none; border-color:var(--green-primary); box-shadow:0 0 0 3px rgba(44,95,45,0.2); }
+    .login-btn { width:100%; background:var(--green-primary); color:white; border:none; padding:12px; border-radius:60px; font-weight:600; font-size:1rem; cursor:pointer; transition:0.2s; }
+    .login-btn:hover { background:var(--green-dark); transform:scale(0.98); }
+    .login-guest { background:transparent; border:1.5px solid var(--green-soft); color:var(--green-primary); border-radius:60px; padding:10px 24px; font-weight:500; cursor:pointer; margin-top:8px; transition:0.2s; }
+    .login-guest:hover { background:var(--green-mint); border-color:var(--green-primary); }
+    .login-err { color:#b85c00; font-size:0.8rem; margin-top:12px; text-align:center; }
 
-    /* loading */
-    .loading-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: var(--milk);
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 1rem;
-      font-weight: 500;
-      color: var(--green-primary);
+    /* CUSTOMER */
+    .c-hero { background:linear-gradient(112deg,var(--green-primary) 0%,#3A6B3B 100%); color:white; padding:3rem 1.5rem 4rem; text-align:center; position:relative; overflow:hidden; }
+    .c-hero-pattern { position:absolute; inset:0; background-image:radial-gradient(circle at 10% 30%,rgba(255,245,210,0.15) 2%,transparent 2.5%); background-size:28px 28px; pointer-events:none; }
+    .c-hero-inner { position:relative; z-index:2; }
+    .c-hero-sub { font-size:0.85rem; letter-spacing:3px; text-transform:uppercase; opacity:0.85; }
+    .c-hero-title { font-family:'Cormorant Garamond',serif; font-size:3.7rem; font-weight:700; margin:0.5rem 0; line-height:1.1; }
+    .c-hero-title span { display:block; font-size:1.2rem; font-weight:400; font-family:'Kantumruy Pro',monospace; letter-spacing:1px; opacity:0.9; margin-top:0.25rem; }
+    .c-hero-line { width:70px; height:3px; background:#FFE6B3; margin:1.2rem auto; }
+    .c-hero-desc { font-size:1rem; font-weight:400; max-width:380px; margin:0 auto; }
+    .c-tabs-wrap { padding:0 1rem; margin-top:-1.8rem; position:relative; z-index:3; }
+    .c-tabs { background:white; border-radius:80px; padding:0.3rem; display:flex; flex-wrap:nowrap; gap:0.3rem; overflow-x:auto; overflow-y:hidden; scrollbar-width:thin; -webkit-overflow-scrolling:touch; box-shadow:0 8px 20px rgba(0,0,0,0.05); border:1px solid var(--green-mint); white-space:nowrap; scroll-behavior:smooth; }
+    .c-tabs::-webkit-scrollbar { height:3px; }
+    .c-tabs::-webkit-scrollbar-track { background:var(--green-mint); border-radius:10px; }
+    .c-tabs::-webkit-scrollbar-thumb { background:var(--green-primary); border-radius:10px; }
+    .c-tab { background:transparent; border:none; padding:0.6rem 1.2rem; border-radius:60px; font-weight:500; color:#3c3b38; cursor:pointer; transition:all 0.2s; flex-shrink:0; white-space:nowrap; }
+    .c-tab.active { background:var(--green-primary); color:white; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
+    .c-section { padding:2rem 1.5rem 4rem; }
+    .c-cat-label { font-family:'Cormorant Garamond',serif; font-weight:600; font-size:1.7rem; margin:1.5rem 0 1rem; color:var(--green-dark); border-left:5px solid var(--green-primary); padding-left:1rem; }
+    .c-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1.8rem; }
+    @media (max-width:640px) {
+      .c-grid { grid-template-columns:repeat(2,1fr); gap:1rem; }
+      .c-card-body { padding:0.75rem; }
+      .c-card-name { font-size:1rem; }
+      .c-card-price { font-size:0.9rem; }
+      .c-card-desc { font-size:0.7rem; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+      .c-card-img { height:130px; }
+      .c-hero-title { font-size:2.2rem; }
+      .c-section { padding:1.5rem 1rem 3rem; }
+      .c-tabs-wrap { padding:0 0.75rem; }
+      .c-tabs { border-radius:60px; padding:0.3rem; }
+      .c-tab { padding:0.5rem 1rem; font-size:0.85rem; }
     }
-    .loading-spinner {
-      width: 44px; height: 44px;
-      border: 3px solid var(--green-mint);
-      border-top: 3px solid var(--green-primary);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .c-card { background:white; border-radius:var(--radius-md); overflow:hidden; box-shadow:var(--shadow-sm); transition:transform 0.2s,box-shadow 0.2s; border:1px solid #F0E7D6; cursor:pointer; }
+    .c-card:hover { transform:translateY(-5px); box-shadow:0 24px 36px -16px rgba(0,0,0,0.15); }
+    .c-card-img { height:190px; background:#F4EFE4; overflow:hidden; }
+    .c-card-img img { width:100%; height:100%; object-fit:cover; transition:0.3s; }
+    .c-card-no-img { height:160px; background:var(--green-mint); display:flex; align-items:center; justify-content:center; font-size:3rem; color:var(--green-primary); }
+    .c-card-body { padding:1.2rem; }
+    .c-card-cat { font-size:0.7rem; text-transform:uppercase; color:var(--green-soft); letter-spacing:1px; margin-bottom:6px; }
+    .c-card-name { font-weight:700; font-size:1.25rem; margin-bottom:0.4rem; }
+    .c-card-desc { font-size:0.8rem; color:#5f5b54; margin-bottom:0.8rem; line-height:1.35; }
+    .c-card-price { font-weight:700; color:var(--green-primary); font-size:1.2rem; letter-spacing:-0.2px; background:var(--milk); display:inline-block; padding:0.2rem 0.8rem; border-radius:60px; }
+    .c-empty { text-align:center; padding:3rem; background:white; border-radius:32px; color:#7d7a73; }
 
-    /* views */
-    #viewLogin, #viewCustomer, #viewAdmin {
-      display: none;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-    }
-    #viewLogin.active, #viewCustomer.active, #viewAdmin.active {
-      display: block;
-      opacity: 1;
-    }
+    /* CUSTOMER MODAL */
+    .customer-modal-overlay { position:fixed; inset:0; background:rgba(30,30,20,0.85); backdrop-filter:blur(8px); display:flex; align-items:center; justify-content:center; z-index:1000; visibility:hidden; opacity:0; transition:0.2s ease; }
+    .customer-modal-overlay.open { visibility:visible; opacity:1; }
+    .customer-modal { background:white; max-width:520px; width:88%; border-radius:40px; overflow:hidden; box-shadow:0 30px 40px rgba(0,0,0,0.2); animation:fadeUp 0.25s ease; }
+    @keyframes fadeUp { from { transform:translateY(20px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+    .customer-modal-img { width:100%; max-height:320px; background:#EADFCB; display:flex; justify-content:center; align-items:center; overflow:hidden; }
+    .customer-modal-img img { width:100%; height:auto; object-fit:cover; max-height:320px; }
+    .customer-modal-content { padding:1.8rem; }
+    .customer-modal-cat { font-size:0.7rem; text-transform:uppercase; letter-spacing:2px; color:var(--green-soft); margin-bottom:6px; }
+    .customer-modal-title { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:700; color:var(--green-dark); margin-bottom:0.5rem; }
+    .customer-modal-desc { font-size:0.95rem; color:#4c4a45; line-height:1.5; margin:1rem 0; }
+    .customer-modal-price { font-size:1.8rem; font-weight:700; color:var(--green-primary); margin:0.8rem 0 0.2rem; display:inline-block; background:var(--green-mint); padding:0.2rem 1rem; border-radius:80px; }
+    .customer-modal-close-inner { background:var(--green-primary); color:white; border:none; padding:8px 22px; border-radius:60px; font-weight:500; margin-top:18px; cursor:pointer; width:100%; transition:0.2s; }
+    .customer-modal-close-inner:hover { background:var(--green-dark); }
+    .customer-modal-img-placeholder { background:var(--green-mint); width:100%; height:240px; display:flex; align-items:center; justify-content:center; font-size:4rem; color:var(--green-primary); }
 
-    /* LOGIN — milk & green */
-    .login-box {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem 1.5rem;
-      background: radial-gradient(circle at 10% 20%, var(--cream), var(--milk-deep));
-    }
-    .login-logo {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 3.8rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: var(--green-primary);
-      background: linear-gradient(135deg, var(--green-primary), #4A784A);
-      background-clip: text;
-      -webkit-background-clip: text;
-      color: transparent;
-      margin-bottom: 0.5rem;
-    }
-    .login-tagline {
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--green-soft);
-      border-bottom: 1px solid var(--green-mint);
-      display: inline-block;
-      padding-bottom: 6px;
-    }
-    .login-ornament {
-      width: 48px;
-      height: 2px;
-      background: var(--green-soft);
-      margin: 1rem auto;
-    }
-    .login-card {
-      background: white;
-      border-radius: var(--radius-card);
-      padding: 2rem;
-      width: 100%;
-      max-width: 400px;
-      margin: 2rem 0 1.2rem;
-      box-shadow: var(--shadow-sm);
-      border: 1px solid rgba(44, 95, 45, 0.15);
-    }
-    .login-input {
-      width: 100%;
-      padding: 14px 18px;
-      border: 1.5px solid #e2e6e0;
-      border-radius: 60px;
-      font-size: 1rem;
-      background: white;
-      transition: all 0.2s;
-      margin-bottom: 1.5rem;
-    }
-    .login-input:focus {
-      outline: none;
-      border-color: var(--green-primary);
-      box-shadow: 0 0 0 3px rgba(44, 95, 45, 0.2);
-    }
-    .login-btn {
-      width: 100%;
-      background: var(--green-primary);
-      color: white;
-      border: none;
-      padding: 12px;
-      border-radius: 60px;
-      font-weight: 600;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .login-btn:hover {
-      background: var(--green-dark);
-      transform: scale(0.98);
-    }
-    .login-guest {
-      background: transparent;
-      border: 1.5px solid var(--green-soft);
-      color: var(--green-primary);
-      border-radius: 60px;
-      padding: 10px 24px;
-      font-weight: 500;
-      cursor: pointer;
-      margin-top: 8px;
-      transition: 0.2s;
-    }
-    .login-guest:hover {
-      background: var(--green-mint);
-      border-color: var(--green-primary);
-    }
-    .login-err {
-      color: #b85c00;
-      font-size: 0.8rem;
-      margin-top: 12px;
-      text-align: center;
-    }
+    /* FAB */
+    .fab-admin { position:fixed; bottom:24px; right:24px; width:52px; height:52px; border-radius:60px; background:var(--green-primary); border:none; color:white; font-size:26px; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.2); transition:0.2s; z-index:90; }
+    .fab-admin:hover { background:var(--green-dark); transform:scale(1.03); }
 
-    /* ========= CUSTOMER (MILK + GREEN COFFEE VIBE) ========= */
-    .c-hero {
-      background: linear-gradient(112deg, var(--green-primary) 0%, #3A6B3B 100%);
-      color: white;
-      padding: 3rem 1.5rem 4rem;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-    .c-hero-pattern {
-      position: absolute;
-      inset: 0;
-      background-image: radial-gradient(circle at 10% 30%, rgba(255,245,210,0.15) 2%, transparent 2.5%);
-      background-size: 28px 28px;
-      pointer-events: none;
-    }
-    .c-hero-inner {
-      position: relative;
-      z-index: 2;
-    }
-    .c-hero-sub {
-      font-size: 0.85rem;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      opacity: 0.85;
-    }
-    .c-hero-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 3.7rem;
-      font-weight: 700;
-      margin: 0.5rem 0;
-      line-height: 1.1;
-    }
-    .c-hero-title span {
-      display: block;
-      font-size: 1.2rem;
-      font-weight: 400;
-      font-family: 'Kantumruy Pro', monospace;
-      letter-spacing: 1px;
-      opacity: 0.9;
-      margin-top: 0.25rem;
-    }
-    .c-hero-line {
-      width: 70px;
-      height: 3px;
-      background: #FFE6B3;
-      margin: 1.2rem auto;
-    }
-    .c-hero-desc {
-      font-size: 1rem;
-      font-weight: 400;
-      max-width: 380px;
-      margin: 0 auto;
-    }
-    .c-tabs-wrap {
-      padding: 0 1rem;
-      margin-top: -1.8rem;
-      position: relative;
-      z-index: 3;
-    }
-    /* HORIZONTAL SCROLLABLE TABS (mobile first) */
-    .c-tabs {
-      background: white;
-      border-radius: 80px;
-      padding: 0.3rem;
-      display: flex;
-      flex-wrap: nowrap;          /* no wrap, horizontal scroll */
-      gap: 0.3rem;
-      overflow-x: auto;
-      overflow-y: hidden;
-      scrollbar-width: thin;
-      -webkit-overflow-scrolling: touch;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-      border: 1px solid var(--green-mint);
-      white-space: nowrap;
-      scroll-behavior: smooth;
-    }
-    /* hide scrollbar on chrome/safari for cleaner look (optional) */
-    .c-tabs::-webkit-scrollbar {
-      height: 3px;
-    }
-    .c-tabs::-webkit-scrollbar-track {
-      background: var(--green-mint);
-      border-radius: 10px;
-    }
-    .c-tabs::-webkit-scrollbar-thumb {
-      background: var(--green-primary);
-      border-radius: 10px;
-    }
-    .c-tab {
-      background: transparent;
-      border: none;
-      padding: 0.6rem 1.2rem;
-      border-radius: 60px;
-      font-weight: 500;
-      color: #3c3b38;
-      cursor: pointer;
-      transition: all 0.2s;
-      flex-shrink: 0;            /* prevent shrinking */
-      white-space: nowrap;
-    }
-    .c-tab.active {
-      background: var(--green-primary);
-      color: white;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    .c-section {
-      padding: 2rem 1.5rem 4rem;
-    }
-    .c-cat-label {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 600;
-      font-size: 1.7rem;
-      margin: 1.5rem 0 1rem;
-      color: var(--green-dark);
-      border-left: 5px solid var(--green-primary);
-      padding-left: 1rem;
-    }
-    /* GRID: responsive mobile 2-column layout */
-    .c-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1.8rem;
-    }
-    /* On mobile phones: force 2 columns like a "cart" layout */
-    @media (max-width: 640px) {
-      .c-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-      }
-      .c-card-body {
-        padding: 0.75rem;
-      }
-      .c-card-name {
-        font-size: 1rem;
-      }
-      .c-card-price {
-        font-size: 0.9rem;
-      }
-      .c-card-desc {
-        font-size: 0.7rem;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-      }
-      .c-card-img {
-        height: 130px;
-      }
-      .c-hero-title {
-        font-size: 2.2rem;
-      }
-      .c-section {
-        padding: 1.5rem 1rem 3rem;
-      }
-      .c-tabs-wrap {
-        padding: 0 0.75rem;
-      }
-      .c-tabs {
-        border-radius: 60px;
-        padding: 0.3rem;
-      }
-      .c-tab {
-        padding: 0.5rem 1rem;
-        font-size: 0.85rem;
-      }
-    }
-    /* Card clickable */
-    .c-card {
-      background: white;
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      box-shadow: var(--shadow-sm);
-      transition: transform 0.2s, box-shadow 0.2s;
-      border: 1px solid #F0E7D6;
-      cursor: pointer;
-    }
-    .c-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 24px 36px -16px rgba(0,0,0,0.15);
-    }
-    .c-card-img {
-      height: 190px;
-      background: #F4EFE4;
-      overflow: hidden;
-    }
-    .c-card-img img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: 0.3s;
-    }
-    .c-card-no-img {
-      height: 160px;
-      background: var(--green-mint);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 3rem;
-      color: var(--green-primary);
-    }
-    .c-card-body {
-      padding: 1.2rem;
-    }
-    .c-card-cat {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      color: var(--green-soft);
-      letter-spacing: 1px;
-      margin-bottom: 6px;
-    }
-    .c-card-name {
-      font-weight: 700;
-      font-size: 1.25rem;
-      margin-bottom: 0.4rem;
-    }
-    .c-card-desc {
-      font-size: 0.8rem;
-      color: #5f5b54;
-      margin-bottom: 0.8rem;
-      line-height: 1.35;
-    }
-    .c-card-price {
-      font-weight: 700;
-      color: var(--green-primary);
-      font-size: 1.2rem;
-      letter-spacing: -0.2px;
-      background: var(--milk);
-      display: inline-block;
-      padding: 0.2rem 0.8rem;
-      border-radius: 60px;
-    }
-    .c-empty {
-      text-align: center;
-      padding: 3rem;
-      background: white;
-      border-radius: 32px;
-      color: #7d7a73;
-    }
+    /* ADMIN MINI MODAL */
+    .admin-mini-overlay { position:fixed; inset:0; background:rgba(30,30,20,0.6); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; z-index:200; visibility:hidden; opacity:0; transition:0.2s; }
+    .admin-mini-overlay.open { visibility:visible; opacity:1; }
+    .admin-mini-box { background:white; max-width:360px; width:85%; padding:2rem; border-radius:40px; text-align:center; position:relative; }
+    .admin-mini-logo { font-size:1.6rem; font-weight:600; color:var(--green-primary); }
+    .admin-mini-sub { margin:6px 0 18px; color:#6b6a65; }
+    .admin-mini-input { width:100%; padding:14px; border-radius:60px; border:1px solid #dbd5c7; margin-bottom:1rem; font-family:inherit; }
+    .admin-mini-btn { background:var(--green-primary); color:white; border:none; width:100%; padding:12px; border-radius:60px; font-weight:600; cursor:pointer; font-family:inherit; }
+    .admin-mini-close { position:absolute; top:16px; right:20px; background:none; border:none; font-size:22px; cursor:pointer; }
+    .admin-mini-err { color:#b85c00; font-size:0.82rem; margin-top:8px; }
 
-    /* CUSTOMER MODAL - big details */
-    .customer-modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(30, 30, 20, 0.85);
-      backdrop-filter: blur(8px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      visibility: hidden;
-      opacity: 0;
-      transition: 0.2s ease;
-    }
-    .customer-modal-overlay.open {
-      visibility: visible;
-      opacity: 1;
-    }
-    .customer-modal {
-      background: white;
-      max-width: 520px;
-      width: 88%;
-      border-radius: 40px;
-      overflow: hidden;
-      box-shadow: 0 30px 40px rgba(0,0,0,0.2);
-      animation: fadeUp 0.25s ease;
-    }
-    @keyframes fadeUp {
-      from {
-        transform: translateY(20px);
-        opacity: 0;
-      }
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-    .customer-modal-img {
-      width: 100%;
-      max-height: 320px;
-      background: #EADFCB;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-    }
-    .customer-modal-img img {
-      width: 100%;
-      height: auto;
-      object-fit: cover;
-      max-height: 320px;
-    }
-    .customer-modal-content {
-      padding: 1.8rem;
-    }
-    .customer-modal-cat {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--green-soft);
-      margin-bottom: 6px;
-    }
-    .customer-modal-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--green-dark);
-      margin-bottom: 0.5rem;
-    }
-    .customer-modal-desc {
-      font-size: 0.95rem;
-      color: #4c4a45;
-      line-height: 1.5;
-      margin: 1rem 0;
-    }
-    .customer-modal-price {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: var(--green-primary);
-      margin: 0.8rem 0 0.2rem;
-      display: inline-block;
-      background: var(--green-mint);
-      padding: 0.2rem 1rem;
-      border-radius: 80px;
-    }
-    .close-modal-btn {
-      background: none;
-      border: none;
-      font-size: 1.8rem;
-      position: absolute;
-      top: 12px;
-      right: 20px;
-      cursor: pointer;
-      color: white;
-      background: rgba(0,0,0,0.5);
-      width: 40px;
-      height: 40px;
-      border-radius: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(4px);
-    }
-    .customer-modal-close-inner {
-      background: var(--green-primary);
-      color: white;
-      border: none;
-      padding: 8px 22px;
-      border-radius: 60px;
-      font-weight: 500;
-      margin-top: 18px;
-      cursor: pointer;
-      width: 100%;
-      transition: 0.2s;
-    }
-    .customer-modal-close-inner:hover {
-      background: var(--green-dark);
-    }
-    .customer-modal-img-placeholder {
-      background: var(--green-mint);
-      width: 100%;
-      height: 240px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 4rem;
-      color: var(--green-primary);
-    }
+    /* ADMIN PANEL */
+    .admin-nav { background:white; padding:0.8rem 2rem; display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid var(--green-mint); flex-wrap:wrap; }
+    .admin-nav-logo { font-weight:700; color:var(--green-dark); font-size:1.2rem; }
+    .a-btn { background:var(--green-soft); border:none; padding:8px 18px; border-radius:40px; font-weight:500; color:white; cursor:pointer; margin-left:10px; font-family:inherit; }
+    .a-btn.red { background:#b1624b; }
+    .a-btn.gold { background:var(--green-primary); }
+    .admin-body { padding:2rem; background:var(--milk-deep); }
+    .admin-header { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom:2rem; }
+    .admin-title { font-size:1.7rem; font-weight:600; color:var(--green-dark); }
+    .admin-subtitle { color:#6f6a60; }
+    .cat-panel { background:white; border-radius:28px; padding:1.3rem; margin-bottom:2rem; }
+    .cat-chips { display:flex; flex-wrap:wrap; gap:0.6rem; margin:1rem 0; }
+    .cat-chip { background:var(--green-mint); padding:5px 12px 5px 16px; border-radius:60px; display:inline-flex; align-items:center; gap:8px; font-size:0.85rem; }
+    .cat-chip-del { background:none; border:none; cursor:pointer; font-weight:bold; color:#7a3e2c; }
+    .cat-row { display:flex; gap:10px; margin-top:12px; }
+    .finput, .fselect, .ftextarea { width:100%; padding:12px 16px; border-radius:24px; border:1.5px solid #ddd6c8; background:white; font-family:inherit; font-size:0.95rem; transition:border-color 0.2s; }
+    .finput:focus, .fselect:focus, .ftextarea:focus { outline:none; border-color:var(--green-primary); box-shadow:0 0 0 3px rgba(44,95,45,0.15); }
+    .ftextarea { border-radius:18px; resize:vertical; min-height:80px; }
+    .admin-tabs { display:flex; flex-wrap:wrap; gap:8px; margin:1.5rem 0 1.8rem; }
+    .admin-tab { background:#E9E1D2; border:none; padding:6px 18px; border-radius:40px; cursor:pointer; font-family:inherit; }
+    .admin-tab.active { background:var(--green-primary); color:white; }
+    .admin-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:1.6rem; }
+    .a-card { background:white; border-radius:28px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.03); transition:0.2s; border:1px solid #e4dccc; }
+    .a-card-img-wrap { height:170px; background:#ece3d7; position:relative; cursor:pointer; overflow:hidden; }
+    .a-card-img-wrap img { width:100%; height:100%; object-fit:cover; }
+    .a-img-overlay { position:absolute; inset:0; background:rgba(44,95,45,0.7); display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; opacity:0; transition:0.2s; }
+    .a-card-img-wrap:hover .a-img-overlay { opacity:1; }
+    .a-card-no-img { height:150px; background:#e9e2d4; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:8px; cursor:pointer; color:var(--green-primary); }
+    .a-card-body { padding:1rem; }
+    .a-card-name { font-weight:700; }
+    .a-card-cat { font-size:0.7rem; text-transform:uppercase; color:var(--green-soft); letter-spacing:1px; margin-bottom:4px; }
+    .a-card-desc { font-size:0.8rem; color:#5f5b54; margin:4px 0; }
+    .a-card-foot { display:flex; justify-content:space-between; align-items:center; margin-top:12px; }
+    .a-card-price { font-weight:700; color:var(--green-dark); }
+    .a-icon-btn { background:transparent; border:none; font-size:1.2rem; cursor:pointer; padding:4px 10px; }
+    .a-add-card { background:white; border:2px dashed var(--green-soft); border-radius:28px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; padding:2rem; cursor:pointer; color:var(--green-primary); min-height:180px; }
 
-    /* admin floating button */
-    .fab-admin {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      width: 52px;
-      height: 52px;
-      border-radius: 60px;
-      background: var(--green-primary);
-      border: none;
-      color: white;
-      font-size: 26px;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      transition: 0.2s;
-      z-index: 90;
-    }
-    .fab-admin:hover {
-      background: var(--green-dark);
-      transform: scale(1.03);
-    }
+    /* EDIT / ADD MODAL */
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); backdrop-filter:blur(5px); display:flex; align-items:center; justify-content:center; visibility:hidden; opacity:0; transition:0.2s; z-index:300; }
+    .modal-overlay.open { visibility:visible; opacity:1; }
+    .modal { background:white; max-width:550px; width:90%; border-radius:36px; padding:2rem; max-height:90vh; overflow-y:auto; }
+    .modal-title { font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:700; color:var(--green-dark); margin-bottom:1.5rem; }
+    .modal-field { margin-bottom:1.2rem; }
+    .modal-label { display:block; font-size:0.8rem; font-weight:600; color:var(--green-soft); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }
+    .modal-actions { display:flex; gap:10px; margin-top:1.5rem; flex-wrap:wrap; }
+    .img-drop-zone { border:2px dashed #b9ceaa; background:#faf7ef; border-radius:28px; padding:1rem; text-align:center; cursor:pointer; transition:0.2s; min-height:140px; position:relative; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:8px; color:var(--green-soft); }
+    .img-drop-zone:hover { border-color:var(--green-primary); background:#f0f7ef; }
+    .img-drop-zone img { max-height:140px; border-radius:18px; object-fit:cover; }
+    .drop-hint { font-size:0.85rem; }
 
-    /* ADMIN MINI MODAL (milk/green) */
-    .admin-mini-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(30, 30, 20, 0.6);
-      backdrop-filter: blur(4px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 200;
-      visibility: hidden;
-      opacity: 0;
-      transition: 0.2s;
-    }
-    .admin-mini-overlay.open {
-      visibility: visible;
-      opacity: 1;
-    }
-    .admin-mini-box {
-      background: white;
-      max-width: 360px;
-      width: 85%;
-      padding: 2rem;
-      border-radius: 40px;
-      text-align: center;
-      position: relative;
-    }
-    .admin-mini-logo {
-      font-size: 1.6rem;
-      font-weight: 600;
-      color: var(--green-primary);
-    }
-    .admin-mini-sub {
-      margin: 6px 0 18px;
-      color: #6b6a65;
-    }
-    .admin-mini-input {
-      width: 100%;
-      padding: 14px;
-      border-radius: 60px;
-      border: 1px solid #dbd5c7;
-      margin-bottom: 1rem;
-    }
-    .admin-mini-btn {
-      background: var(--green-primary);
-      color: white;
-      border: none;
-      width: 100%;
-      padding: 12px;
-      border-radius: 60px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .admin-mini-close {
-      position: absolute;
-      top: 16px;
-      right: 20px;
-      background: none;
-      border: none;
-      font-size: 22px;
-      cursor: pointer;
-    }
-
-    /* ADMIN PANEL (unchanged) */
-    .admin-nav {
-      background: white;
-      padding: 0.8rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 2px solid var(--green-mint);
-      flex-wrap: wrap;
-    }
-    .admin-nav-logo {
-      font-weight: 700;
-      color: var(--green-dark);
-      font-size: 1.2rem;
-    }
-    .a-btn {
-      background: var(--green-soft);
-      border: none;
-      padding: 8px 18px;
-      border-radius: 40px;
-      font-weight: 500;
-      color: white;
-      cursor: pointer;
-      margin-left: 10px;
-    }
-    .a-btn.red {
-      background: #b1624b;
-    }
-    .a-btn.gold {
-      background: var(--green-primary);
-    }
-    .admin-body {
-      padding: 2rem;
-      background: var(--milk-deep);
-    }
-    .admin-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      margin-bottom: 2rem;
-    }
-    .admin-title {
-      font-size: 1.7rem;
-      font-weight: 600;
-      color: var(--green-dark);
-    }
-    .admin-subtitle {
-      color: #6f6a60;
-    }
-    .cat-panel {
-      background: white;
-      border-radius: 28px;
-      padding: 1.3rem;
-      margin-bottom: 2rem;
-    }
-    .cat-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.6rem;
-      margin: 1rem 0;
-    }
-    .cat-chip {
-      background: var(--green-mint);
-      padding: 5px 12px 5px 16px;
-      border-radius: 60px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.85rem;
-    }
-    .cat-chip-del {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-weight: bold;
-      color: #7a3e2c;
-    }
-    .cat-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 12px;
-    }
-    .finput, .fselect, .ftextarea {
-      width: 100%;
-      padding: 12px;
-      border-radius: 24px;
-      border: 1px solid #ddd6c8;
-      background: white;
-    }
-    .admin-tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin: 1.5rem 0 1.8rem;
-    }
-    .admin-tab {
-      background: #E9E1D2;
-      border: none;
-      padding: 6px 18px;
-      border-radius: 40px;
-      cursor: pointer;
-    }
-    .admin-tab.active {
-      background: var(--green-primary);
-      color: white;
-    }
-    .admin-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-      gap: 1.6rem;
-    }
-    .a-card {
-      background: white;
-      border-radius: 28px;
-      overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-      transition: 0.2s;
-      border: 1px solid #e4dccc;
-    }
-    .a-card-img-wrap {
-      height: 170px;
-      background: #ece3d7;
-      position: relative;
-      cursor: pointer;
-      overflow: hidden;
-    }
-    .a-card-img-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .a-img-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(44, 95, 45, 0.7);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      opacity: 0;
-      transition: 0.2s;
-    }
-    .a-card-img-wrap:hover .a-img-overlay { opacity: 1; }
-    .a-card-no-img {
-      height: 150px;
-      background: #e9e2d4;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 8px;
-      cursor: pointer;
-      color: var(--green-primary);
-    }
-    .a-card-body {
-      padding: 1rem;
-    }
-    .a-card-name {
-      font-weight: 700;
-    }
-    .a-card-foot {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 12px;
-    }
-    .a-card-price {
-      font-weight: 700;
-      color: var(--green-dark);
-    }
-    .a-icon-btn {
-      background: transparent;
-      border: none;
-      font-size: 1.2rem;
-      cursor: pointer;
-      padding: 4px 10px;
-    }
-    .a-add-card {
-      background: white;
-      border: 2px dashed var(--green-soft);
-      border-radius: 28px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 2rem;
-      cursor: pointer;
-      color: var(--green-primary);
-    }
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      backdrop-filter: blur(5px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      visibility: hidden;
-      opacity: 0;
-      transition: 0.2s;
-      z-index: 300;
-    }
-    .modal-overlay.open {
-      visibility: visible;
-      opacity: 1;
-    }
-    .modal {
-      background: white;
-      max-width: 550px;
-      width: 90%;
-      border-radius: 36px;
-      padding: 1.5rem;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-    .img-drop-zone {
-      border: 2px dashed #b9ceaa;
-      background: #faf7ef;
-      border-radius: 28px;
-      padding: 1rem;
-      text-align: center;
-      cursor: pointer;
-      transition: 0.2s;
-      min-height: 140px;
-      position: relative;
-    }
-    .toast {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--green-dark);
-      color: white;
-      padding: 12px 24px;
-      border-radius: 60px;
-      font-size: 0.85rem;
-      z-index: 400;
-      opacity: 0;
-      transition: 0.2s;
-      pointer-events: none;
-    }
-    .toast.show {
-      opacity: 1;
-      bottom: 40px;
-    }
+    /* TOAST */
+    .toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:var(--green-dark); color:white; padding:12px 24px; border-radius:60px; font-size:0.85rem; z-index:400; opacity:0; transition:0.2s; pointer-events:none; }
+    .toast.show { opacity:1; bottom:40px; }
   </style>
 </head>
 <body>
@@ -934,20 +233,26 @@
   </nav>
   <div class="admin-body">
     <div class="admin-header">
-      <div><div class="admin-title">ការគ្រប់គ្រងម៉ឺនុយកាហ្វេ</div><div class="admin-subtitle">KHBB PHY · Battambang</div></div>
+      <div>
+        <div class="admin-title">ការគ្រប់គ្រងម៉ឺនុយកាហ្វេ</div>
+        <div class="admin-subtitle">KHBB PHY · Battambang</div>
+      </div>
       <button class="a-btn gold" onclick="openAddItem()">+ បន្ថែមមុខម្ហូប/ភេសជ្ជៈ</button>
     </div>
     <div class="cat-panel">
-      <div class="cat-panel-head">គ្រប់គ្រងប្រភេទ</div>
+      <div class="cat-panel-head" style="font-weight:600;color:var(--green-dark);">គ្រប់គ្រងប្រភេទ</div>
       <div class="cat-chips" id="adminCatChips"></div>
-      <div class="cat-row"><input class="finput" id="newCatInput" placeholder="ឈ្មោះប្រភេទថ្មី..."><button class="a-btn gold" onclick="addCategory()">បន្ថែម</button></div>
+      <div class="cat-row">
+        <input class="finput" id="newCatInput" placeholder="ឈ្មោះប្រភេទថ្មី...">
+        <button class="a-btn gold" onclick="addCategory()">បន្ថែម</button>
+      </div>
     </div>
     <div class="admin-tabs" id="adminTabs"></div>
     <div class="admin-grid" id="adminGrid"></div>
   </div>
 </div>
 
-<!-- CUSTOMER DETAIL MODAL (Bigger View) -->
+<!-- CUSTOMER DETAIL MODAL -->
 <div class="customer-modal-overlay" id="customerModalOverlay" onclick="if(event.target===this) closeCustomerModal()">
   <div class="customer-modal">
     <div class="customer-modal-img" id="customerModalImg"></div>
@@ -961,17 +266,61 @@
   </div>
 </div>
 
-<!-- EDIT MODAL (Admin) -->
+<!-- ✅ FIXED: ADD / EDIT MODAL with full form fields -->
 <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
-  <div class="modal">...</div>
+  <div class="modal">
+    <div class="modal-title" id="modalTitleText">បន្ថែមមុខម្ហូប</div>
+
+    <!-- Image Upload -->
+    <div class="modal-field">
+      <label class="modal-label">រូបភាព</label>
+      <div class="img-drop-zone" id="imgDropZone">
+        <span style="font-size:2rem;">☕</span>
+        <div class="drop-hint">ចុច ឬអូសទម្លាក់រូបភាព</div>
+      </div>
+      <input type="file" id="modalFileInput" accept="image/*" style="display:none;">
+    </div>
+
+    <!-- Name -->
+    <div class="modal-field">
+      <label class="modal-label" for="fName">ឈ្មោះ *</label>
+      <input class="finput" id="fName" type="text" placeholder="ឈ្មោះមុខម្ហូប ឬភេសជ្ជៈ">
+    </div>
+
+    <!-- Description -->
+    <div class="modal-field">
+      <label class="modal-label" for="fDesc">ការពិពណ៌នា</label>
+      <textarea class="ftextarea" id="fDesc" placeholder="ពិពណ៌នាអំពីរសជាតិ ឬគ្រឿងផ្សំ..."></textarea>
+    </div>
+
+    <!-- Price -->
+    <div class="modal-field">
+      <label class="modal-label" for="fPrice">តម្លៃ *</label>
+      <input class="finput" id="fPrice" type="text" placeholder="ឧ. $2.50 ឬ 10,000">
+    </div>
+
+    <!-- Category -->
+    <div class="modal-field">
+      <label class="modal-label" for="fCat">ប្រភេទ *</label>
+      <select class="fselect" id="fCat"></select>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="modal-actions">
+      <button class="a-btn gold" onclick="saveItem()" style="flex:1;padding:12px;">💾 រក្សាទុក</button>
+      <button class="a-btn" onclick="closeModal()" style="flex:1;padding:12px;">បោះបង់</button>
+      <button class="a-btn red" id="modalDelBtn" onclick="deleteCurrentItem()" style="display:none;flex:1;padding:12px;">🗑 លុប</button>
+    </div>
+  </div>
 </div>
+
 <div class="toast" id="toast"></div>
 <input type="file" id="cardFileInput" accept="image/*" style="display:none;">
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+  import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyABnIqY_TFl3rRvf3A5PKlRrS9O5oqcHo0",
@@ -987,89 +336,319 @@
 
   const PASS = 'admin123';
   let items = [];
-  let categories = ['កាហ្វេក្តៅ', 'កាហ្វេត្រជាក់', 'ភេសជ្ជៈពិសេស', 'នំ & បង្អែម', 'តែ & ម៉ត់'];
+  let categories = ['កាហ្វេក្តៅ','កាហ្វេត្រជាក់','ភេសជ្ជៈពិសេស','នំ & បង្អែម','តែ & ម៉ត់'];
   let activeTab = 'ទាំងអស់';
   let editingFirebaseId = null;
   let pendingImgFile = null;
   let pendingImgPreview = null;
   let cardUploadFirebaseId = null;
 
-  function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.className='toast show'; setTimeout(()=>t.classList.remove('show'),2500); }
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show';
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
   function setLoading(on) { document.getElementById('loadingOverlay').style.display = on ? 'flex' : 'none'; }
-  function setView(id) { ['viewLogin','viewCustomer','viewAdmin'].forEach(v=>document.getElementById(v).classList.remove('active')); document.getElementById(id).classList.add('active'); }
-  window.showCustomer = function() { setView('viewCustomer'); renderCustomer(); document.getElementById('cGrid')?.scrollIntoView({behavior:'smooth',block:'start'}); };
+  function setView(id) {
+    ['viewLogin','viewCustomer','viewAdmin'].forEach(v => document.getElementById(v).classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  window.showCustomer = function() { setView('viewCustomer'); renderCustomer(); };
   function showAdmin() { setView('viewAdmin'); renderAdmin(); }
-  window.doLogin = function() { const v=document.getElementById('loginPass').value; if(v===PASS){ document.getElementById('loginErr').textContent=''; showAdmin(); } else { document.getElementById('loginErr').textContent='❌ លេខសម្ងាត់មិនត្រឹមត្រូវ'; } };
+
+  window.doLogin = function() {
+    const v = document.getElementById('loginPass').value;
+    if (v === PASS) { document.getElementById('loginErr').textContent = ''; showAdmin(); }
+    else { document.getElementById('loginErr').textContent = '❌ លេខសម្ងាត់មិនត្រឹមត្រូវ'; }
+  };
   window.doLogout = function() { showCustomer(); };
-  window.openAdminModal = function() { document.getElementById('miniPass').value=''; document.getElementById('miniErr').textContent=''; document.getElementById('adminMiniOverlay').classList.add('open'); };
+  window.openAdminModal = function() {
+    document.getElementById('miniPass').value = '';
+    document.getElementById('miniErr').textContent = '';
+    document.getElementById('adminMiniOverlay').classList.add('open');
+  };
   window.closeAdminModal = function() { document.getElementById('adminMiniOverlay').classList.remove('open'); };
-  window.doMiniLogin = function() { const v=document.getElementById('miniPass').value; if(v===PASS){ closeAdminModal(); showAdmin(); } else { document.getElementById('miniErr').textContent='❌ Password incorrect'; } };
+  window.doMiniLogin = function() {
+    const v = document.getElementById('miniPass').value;
+    if (v === PASS) { closeAdminModal(); showAdmin(); }
+    else { document.getElementById('miniErr').textContent = '❌ Password incorrect'; }
+  };
 
-  async function loadCategories() { try { const snap=await getDoc(doc(db,'settings','menuConfig')); if(snap.exists() && snap.data().categories?.length) categories=snap.data().categories; else await setDoc(doc(db,'settings','menuConfig'),{categories}); } catch(e){} }
-  async function saveCategories() { await setDoc(doc(db,'settings','menuConfig'),{categories}); }
-  async function loadItems() { try { const snap=await getDocs(collection(db,'menuItems')); items=snap.docs.map(d=>({firebaseId:d.id,...d.data()})); } catch(e){ showToast('មានបញ្ហាផ្ទុក'); } }
-  async function uploadImage(file) { if(!file) return null; if(file.size>5*1024*1024){ showToast('រូបភាពធំពេក max 5MB'); return null; } const formData=new FormData(); formData.append('file',file); formData.append('upload_preset','cambodia_pub'); try{ const resp=await fetch('https://api.cloudinary.com/v1_1/dismpss5e/image/upload',{method:'POST',body:formData}); const data=await resp.json(); if(resp.ok && data.secure_url) return data.secure_url; else throw new Error(data.error?.message); }catch(e){ showToast('Upload failed'); return null; } }
+  async function loadCategories() {
+    try {
+      const snap = await getDoc(doc(db, 'settings', 'menuConfig'));
+      if (snap.exists() && snap.data().categories?.length) categories = snap.data().categories;
+      else await setDoc(doc(db, 'settings', 'menuConfig'), { categories });
+    } catch(e) {}
+  }
+  async function saveCategories() { await setDoc(doc(db, 'settings', 'menuConfig'), { categories }); }
 
+  async function loadItems() {
+    try {
+      const snap = await getDocs(collection(db, 'menuItems'));
+      items = snap.docs.map(d => ({ firebaseId: d.id, ...d.data() }));
+    } catch(e) { showToast('មានបញ្ហាផ្ទុក'); }
+  }
+
+  async function uploadImage(file) {
+    if (!file) return null;
+    if (file.size > 5 * 1024 * 1024) { showToast('រូបភាពធំពេក max 5MB'); return null; }
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'cambodia_pub');
+    try {
+      const resp = await fetch('https://api.cloudinary.com/v1_1/dismpss5e/image/upload', { method: 'POST', body: formData });
+      const data = await resp.json();
+      if (resp.ok && data.secure_url) return data.secure_url;
+      else throw new Error(data.error?.message);
+    } catch(e) { showToast('Upload failed'); return null; }
+  }
+
+  // Customer modal
   window.openCustomerModal = function(id) {
     const item = items.find(i => i.firebaseId === id);
-    if(!item) return;
+    if (!item) return;
     const imgContainer = document.getElementById('customerModalImg');
-    const catSpan = document.getElementById('customerModalCat');
-    const titleSpan = document.getElementById('customerModalTitle');
-    const descSpan = document.getElementById('customerModalDesc');
-    const priceSpan = document.getElementById('customerModalPrice');
-    catSpan.innerText = item.category || 'មុខម្ហូប';
-    titleSpan.innerText = item.name;
-    descSpan.innerText = item.desc || 'គ្មានការពិពណ៌នា';
-    priceSpan.innerText = `$${item.price}`;
-    if(item.img) {
-      imgContainer.innerHTML = `<img src="${item.img}" alt="${item.name}">`;
-    } else {
-      imgContainer.innerHTML = `<div class="customer-modal-img-placeholder">☕</div>`;
-    }
+    document.getElementById('customerModalCat').innerText = item.category || 'មុខម្ហូប';
+    document.getElementById('customerModalTitle').innerText = item.name;
+    document.getElementById('customerModalDesc').innerText = item.desc || 'គ្មានការពិពណ៌នា';
+    document.getElementById('customerModalPrice').innerText = item.price;
+    if (item.img) imgContainer.innerHTML = `<img src="${item.img}" alt="${item.name}">`;
+    else imgContainer.innerHTML = `<div class="customer-modal-img-placeholder">☕</div>`;
     document.getElementById('customerModalOverlay').classList.add('open');
   };
   window.closeCustomerModal = function() { document.getElementById('customerModalOverlay').classList.remove('open'); };
 
+  // Customer render
   function renderCustomer() {
-    const cats=['ទាំងអស់',...categories];
-    const tabsContainer = document.getElementById('cTabs');
-    tabsContainer.innerHTML = cats.map(c=>`<button class="c-tab ${c===activeTab?'active':''}" onclick="window.filterCustomer('${c}',this)">${c}</button>`).join('');
+    const cats = ['ទាំងអស់', ...categories];
+    document.getElementById('cTabs').innerHTML = cats.map(c =>
+      `<button class="c-tab ${c === activeTab ? 'active' : ''}" onclick="window.filterCustomer('${c}',this)">${c}</button>`
+    ).join('');
     renderCustomerGrid(activeTab);
   }
-  window.filterCustomer=function(cat,btn){ activeTab=cat; document.querySelectorAll('.c-tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderCustomerGrid(cat); };
-  
+  window.filterCustomer = function(cat, btn) {
+    activeTab = cat;
+    document.querySelectorAll('.c-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderCustomerGrid(cat);
+  };
   function renderCustomerGrid(cat) {
-    const filtered=cat==='ទាំងអស់'?items:items.filter(i=>i.category===cat);
-    const gridDiv=document.getElementById('cGrid');
-    if(!filtered.length){ gridDiv.innerHTML='<div class="c-empty">មិនទាន់មានមុខម្ហូបក្នុងប្រភេទនេះ</div>'; return; }
-    if(cat==='ទាំងអស់') {
-      let html='';
-      categories.forEach(c=>{
-        const ci=items.filter(i=>i.category===c);
-        if(ci.length) html+=`<div class="c-cat-label">${c}</div><div class="c-grid">${ci.map(i=>`<div class="c-card" onclick="window.openCustomerModal('${i.firebaseId}')">${i.img?`<div class="c-card-img"><img src="${i.img}"></div>`:'<div class="c-card-no-img">☕</div>'}<div class="c-card-body"><div class="c-card-cat">${i.category}</div><div class="c-card-name">${i.name}</div><div class="c-card-desc">${i.desc||''}</div><span class="c-card-price">${i.price}</span></div></div>`).join('')}</div>`;
+    const filtered = cat === 'ទាំងអស់' ? items : items.filter(i => i.category === cat);
+    const gridDiv = document.getElementById('cGrid');
+    if (!filtered.length) { gridDiv.innerHTML = '<div class="c-empty">មិនទាន់មានមុខម្ហូបក្នុងប្រភេទនេះ</div>'; return; }
+    const cardHtml = (i) => `
+      <div class="c-card" onclick="window.openCustomerModal('${i.firebaseId}')">
+        ${i.img ? `<div class="c-card-img"><img src="${i.img}"></div>` : '<div class="c-card-no-img">☕</div>'}
+        <div class="c-card-body">
+          <div class="c-card-cat">${i.category}</div>
+          <div class="c-card-name">${i.name}</div>
+          <div class="c-card-desc">${i.desc || ''}</div>
+          <span class="c-card-price">${i.price}</span>
+        </div>
+      </div>`;
+    if (cat === 'ទាំងអស់') {
+      let html = '';
+      categories.forEach(c => {
+        const ci = items.filter(i => i.category === c);
+        if (ci.length) html += `<div class="c-cat-label">${c}</div><div class="c-grid">${ci.map(cardHtml).join('')}</div>`;
       });
-      gridDiv.innerHTML=html||'<div class="c-empty">គ្មានទិន្នន័យ</div>';
+      gridDiv.innerHTML = html || '<div class="c-empty">គ្មានទិន្នន័យ</div>';
     } else {
-      gridDiv.innerHTML=`<div class="c-grid">${filtered.map(i=>`<div class="c-card" onclick="window.openCustomerModal('${i.firebaseId}')">${i.img?`<div class="c-card-img"><img src="${i.img}"></div>`:'<div class="c-card-no-img">☕</div>'}<div class="c-card-body"><div class="c-card-cat">${i.category}</div><div class="c-card-name">${i.name}</div><div class="c-card-desc">${i.desc||''}</div><span class="c-card-price">${i.price}</span></div></div>`).join('')}</div>`;
+      gridDiv.innerHTML = `<div class="c-grid">${filtered.map(cardHtml).join('')}</div>`;
     }
   }
 
-  function renderAdmin(){ renderAdminCatChips(); document.getElementById('adminTabs').innerHTML=['ទាំងអស់',...categories].map(c=>`<button class="admin-tab ${activeTab===c?'active':''}" onclick="window.setAdminTab('${c}')">${c}</button>`).join(''); const filtered=activeTab==='ទាំងអស់'?items:items.filter(i=>i.category===activeTab); const g=document.getElementById('adminGrid'); g.innerHTML=filtered.map(item=>`<div class="a-card"><div class="a-card-img-wrap" id="wrap-${item.firebaseId}" onclick="window.triggerCardImg('${item.firebaseId}')">${item.img?`<img src="${item.img}"><div class="a-img-overlay"><svg width="20" height="20" fill="none" stroke="white" viewBox="0 0 24 24"><path d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg><span>ផ្លាស់ប្ដូររូប</span></div>`:`<div class="a-card-no-img"><svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg><span>Upload</span></div>`}</div><div class="a-card-body"><div class="a-card-cat">${item.category}</div><div class="a-card-name">${item.name}</div><div class="a-card-desc">${item.desc||''}</div><div class="a-card-foot"><span class="a-card-price">${item.price}</span><div><button class="a-icon-btn" onclick="window.openEditItem('${item.firebaseId}')">✎</button><button class="a-icon-btn del" onclick="window.quickDelete('${item.firebaseId}')">✕</button></div></div></div></div>`).join('')+`<button class="a-add-card" onclick="window.openAddItem()"><svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 4.5v15m7.5-7.5h-15"/></svg><span>ADD ITEM</span></button>`; }
-  window.setAdminTab=function(c){ activeTab=c; renderAdmin(); };
-  window.triggerCardImg=function(id){ cardUploadFirebaseId=id; document.getElementById('cardFileInput').click(); };
-  document.getElementById('cardFileInput').addEventListener('change',async(e)=>{ const file=e.target.files[0]; if(!file||!cardUploadFirebaseId)return; const url=await uploadImage(file); if(url){ await updateDoc(doc(db,'menuItems',cardUploadFirebaseId),{img:url}); await loadItems(); renderAdmin(); renderCustomerGrid(activeTab); showToast('រូបភាពបានផ្លាស់ប្ដូរ ✓'); } cardUploadFirebaseId=null; this.value=''; });
-  window.openAddItem=function(){ editingFirebaseId=null; pendingImgFile=null; pendingImgPreview=null; document.getElementById('imgDropZone').innerHTML='<div class="drop-hint">☕ ចុច ឬអូសទម្លាក់រូបភាព</div>'; document.getElementById('fName').value=''; document.getElementById('fDesc').value=''; document.getElementById('fPrice').value=''; document.getElementById('fCat').innerHTML=categories.map(c=>`<option value="${c}">${c}</option>`).join(''); document.getElementById('modalDelBtn').style.display='none'; document.getElementById('modalOverlay').classList.add('open'); };
-  window.openEditItem=function(id){ const item=items.find(i=>i.firebaseId===id); if(!item)return; editingFirebaseId=id; pendingImgFile=null; pendingImgPreview=item.img||null; document.getElementById('fName').value=item.name; document.getElementById('fDesc').value=item.desc||''; document.getElementById('fPrice').value=item.price; document.getElementById('fCat').innerHTML=categories.map(c=>`<option value="${c}" ${c===item.category?'selected':''}>${c}</option>`).join(''); const drop=document.getElementById('imgDropZone'); if(item.img) drop.innerHTML=`<img src="${item.img}" style="border-radius:18px;max-height:140px;object-fit:cover;"><div class="drop-hint">ចុចផ្លាស់ប្ដូរ</div>`; else drop.innerHTML='<div class="drop-hint">☕ ចុច ឬអូសទម្លាក់រូបភាព</div>'; document.getElementById('modalDelBtn').style.display='inline-block'; document.getElementById('modalOverlay').classList.add('open'); };
-  window.closeModal=function(){ document.getElementById('modalOverlay').classList.remove('open'); editingFirebaseId=null; };
-  window.saveItem=async function(){ const name=document.getElementById('fName').value.trim(); const desc=document.getElementById('fDesc').value.trim(); const price=document.getElementById('fPrice').value.trim(); const cat=document.getElementById('fCat').value; if(!name||!price){ showToast('តម្រូវឱ្យបំពេញឈ្មោះ និងតម្លៃ'); return; } let imgUrl=pendingImgPreview&&pendingImgPreview.startsWith('http')?pendingImgPreview:null; if(pendingImgFile){ const up=await uploadImage(pendingImgFile); if(up) imgUrl=up; } const data={name,desc,price,category:cat,img:imgUrl||null}; if(editingFirebaseId) await updateDoc(doc(db,'menuItems',editingFirebaseId),data); else await addDoc(collection(db,'menuItems'),data); await loadItems(); closeModal(); renderAdmin(); renderCustomerGrid(activeTab); showToast('រក្សាទុកបានសម្រេច'); };
-  window.deleteCurrentItem=async function(){ if(!editingFirebaseId)return; if(confirm('លុបម្ហូបនេះ?')){ await deleteDoc(doc(db,'menuItems',editingFirebaseId)); await loadItems(); closeModal(); renderAdmin(); renderCustomerGrid(activeTab); showToast('បានលុប'); } };
-  window.quickDelete=async function(id){ if(confirm('លុបម្ហូបនេះ?')){ await deleteDoc(doc(db,'menuItems',id)); await loadItems(); renderAdmin(); renderCustomerGrid(activeTab); showToast('លុបរួច'); } };
-  window.addCategory=async function(){ const v=document.getElementById('newCatInput').value.trim(); if(!v)return; if(categories.includes(v)){ showToast('ប្រភេទមានរួច'); return; } categories.push(v); await saveCategories(); renderAdmin(); document.getElementById('newCatInput').value=''; showToast('បន្ថែមប្រភេទ '+v); };
-  window.deleteCat=async function(i){ const c=categories[i]; if(items.some(x=>x.category===c)){ showToast('សូមលុបមុខម្ហូបក្នុងប្រភេទនេះជាមុន'); return; } if(!confirm(`លុប "${c}"?`))return; categories.splice(i,1); if(activeTab===c)activeTab='ទាំងអស់'; await saveCategories(); renderAdmin(); };
-  function renderAdminCatChips(){ document.getElementById('adminCatChips').innerHTML=categories.map((c,i)=>`<div class="cat-chip">${c}<button class="cat-chip-del" onclick="window.deleteCat(${i})">✕</button></div>`).join(''); }
-  const imgDropZone=document.getElementById('imgDropZone'), modalFileInput=document.getElementById('modalFileInput'); if(imgDropZone){ imgDropZone.addEventListener('click',()=>modalFileInput.click()); modalFileInput.addEventListener('change',e=>{ const file=e.target.files[0]; if(file&&file.type.startsWith('image/')){ if(file.size>5*1024*1024){ showToast('ទំហំអតិបរមា 5MB');return;} pendingImgFile=file; const reader=new FileReader(); reader.onload=ev=>{ pendingImgPreview=ev.target.result; imgDropZone.innerHTML=`<img src="${pendingImgPreview}" style="border-radius:18px;max-height:140px;object-fit:cover;"><div class="drop-hint">កែប្រែរូប</div>`; }; reader.readAsDataURL(file); } this.value=''; });}
-  async function init(){ setLoading(true); await loadCategories(); await loadItems(); setLoading(false); showCustomer(); }
+  // Admin render
+  function renderAdmin() {
+    renderAdminCatChips();
+    document.getElementById('adminTabs').innerHTML = ['ទាំងអស់', ...categories].map(c =>
+      `<button class="admin-tab ${activeTab === c ? 'active' : ''}" onclick="window.setAdminTab('${c}')">${c}</button>`
+    ).join('');
+    const filtered = activeTab === 'ទាំងអស់' ? items : items.filter(i => i.category === activeTab);
+    const g = document.getElementById('adminGrid');
+    g.innerHTML = filtered.map(item => `
+      <div class="a-card">
+        <div class="a-card-img-wrap" onclick="window.triggerCardImg('${item.firebaseId}')">
+          ${item.img
+            ? `<img src="${item.img}"><div class="a-img-overlay"><svg width="20" height="20" fill="none" stroke="white" viewBox="0 0 24 24"><path d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg><span>ផ្លាស់ប្ដូររូប</span></div>`
+            : `<div class="a-card-no-img"><svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg><span>Upload</span></div>`
+          }
+        </div>
+        <div class="a-card-body">
+          <div class="a-card-cat">${item.category}</div>
+          <div class="a-card-name">${item.name}</div>
+          <div class="a-card-desc">${item.desc || ''}</div>
+          <div class="a-card-foot">
+            <span class="a-card-price">${item.price}</span>
+            <div>
+              <button class="a-icon-btn" onclick="window.openEditItem('${item.firebaseId}')">✎</button>
+              <button class="a-icon-btn" onclick="window.quickDelete('${item.firebaseId}')">✕</button>
+            </div>
+          </div>
+        </div>
+      </div>`).join('') +
+      `<button class="a-add-card" onclick="window.openAddItem()">
+        <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 4.5v15m7.5-7.5h-15"/></svg>
+        <span>ADD ITEM</span>
+      </button>`;
+  }
+
+  window.setAdminTab = function(c) { activeTab = c; renderAdmin(); };
+
+  // Card image upload (quick from card)
+  window.triggerCardImg = function(id) { cardUploadFirebaseId = id; document.getElementById('cardFileInput').click(); };
+  document.getElementById('cardFileInput').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file || !cardUploadFirebaseId) return;
+    const url = await uploadImage(file);
+    if (url) {
+      await updateDoc(doc(db, 'menuItems', cardUploadFirebaseId), { img: url });
+      await loadItems(); renderAdmin(); renderCustomerGrid(activeTab);
+      showToast('រូបភាពបានផ្លាស់ប្ដូរ ✓');
+    }
+    cardUploadFirebaseId = null;
+    e.target.value = '';
+  });
+
+  // ✅ FIXED: Add / Edit modal functions
+  function resetModal() {
+    pendingImgFile = null;
+    pendingImgPreview = null;
+    document.getElementById('imgDropZone').innerHTML = '<span style="font-size:2rem;">☕</span><div class="drop-hint">ចុច ឬអូសទម្លាក់រូបភាព</div>';
+    document.getElementById('fName').value = '';
+    document.getElementById('fDesc').value = '';
+    document.getElementById('fPrice').value = '';
+    document.getElementById('fCat').innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
+  }
+
+  window.openAddItem = function() {
+    editingFirebaseId = null;
+    resetModal();
+    document.getElementById('modalTitleText').textContent = 'បន្ថែមមុខម្ហូប / ភេសជ្ជៈ';
+    document.getElementById('modalDelBtn').style.display = 'none';
+    document.getElementById('modalOverlay').classList.add('open');
+  };
+
+  window.openEditItem = function(id) {
+    const item = items.find(i => i.firebaseId === id);
+    if (!item) return;
+    editingFirebaseId = id;
+    pendingImgFile = null;
+    pendingImgPreview = item.img || null;
+    document.getElementById('modalTitleText').textContent = 'កែប្រែ: ' + item.name;
+    document.getElementById('fName').value = item.name;
+    document.getElementById('fDesc').value = item.desc || '';
+    document.getElementById('fPrice').value = item.price;
+    document.getElementById('fCat').innerHTML = categories.map(c =>
+      `<option value="${c}" ${c === item.category ? 'selected' : ''}>${c}</option>`
+    ).join('');
+    const drop = document.getElementById('imgDropZone');
+    if (item.img) drop.innerHTML = `<img src="${item.img}"><div class="drop-hint">ចុចផ្លាស់ប្ដូរ</div>`;
+    else drop.innerHTML = '<span style="font-size:2rem;">☕</span><div class="drop-hint">ចុច ឬអូសទម្លាក់រូបភាព</div>';
+    document.getElementById('modalDelBtn').style.display = 'inline-block';
+    document.getElementById('modalOverlay').classList.add('open');
+  };
+
+  window.closeModal = function() { document.getElementById('modalOverlay').classList.remove('open'); editingFirebaseId = null; };
+
+  window.saveItem = async function() {
+    const name = document.getElementById('fName').value.trim();
+    const desc = document.getElementById('fDesc').value.trim();
+    const price = document.getElementById('fPrice').value.trim();
+    const cat = document.getElementById('fCat').value;
+    if (!name || !price) { showToast('⚠️ តម្រូវឱ្យបំពេញឈ្មោះ និងតម្លៃ'); return; }
+    showToast('⏳ កំពុងរក្សាទុក...');
+    let imgUrl = (pendingImgPreview && pendingImgPreview.startsWith('http')) ? pendingImgPreview : null;
+    if (pendingImgFile) { const up = await uploadImage(pendingImgFile); if (up) imgUrl = up; }
+    const data = { name, desc, price, category: cat, img: imgUrl || null };
+    if (editingFirebaseId) await updateDoc(doc(db, 'menuItems', editingFirebaseId), data);
+    else await addDoc(collection(db, 'menuItems'), data);
+    await loadItems();
+    closeModal();
+    renderAdmin();
+    renderCustomerGrid(activeTab);
+    showToast('✅ រក្សាទុកបានសម្រេច');
+  };
+
+  window.deleteCurrentItem = async function() {
+    if (!editingFirebaseId) return;
+    if (confirm('លុបម្ហូបនេះ?')) {
+      await deleteDoc(doc(db, 'menuItems', editingFirebaseId));
+      await loadItems(); closeModal(); renderAdmin(); renderCustomerGrid(activeTab);
+      showToast('🗑 បានលុប');
+    }
+  };
+
+  window.quickDelete = async function(id) {
+    if (confirm('លុបម្ហូបនេះ?')) {
+      await deleteDoc(doc(db, 'menuItems', id));
+      await loadItems(); renderAdmin(); renderCustomerGrid(activeTab);
+      showToast('លុបរួច');
+    }
+  };
+
+  window.addCategory = async function() {
+    const v = document.getElementById('newCatInput').value.trim();
+    if (!v) return;
+    if (categories.includes(v)) { showToast('ប្រភេទមានរួច'); return; }
+    categories.push(v);
+    await saveCategories(); renderAdmin();
+    document.getElementById('newCatInput').value = '';
+    showToast('បន្ថែមប្រភេទ ' + v);
+  };
+
+  window.deleteCat = async function(i) {
+    const c = categories[i];
+    if (items.some(x => x.category === c)) { showToast('សូមលុបមុខម្ហូបក្នុងប្រភេទនេះជាមុន'); return; }
+    if (!confirm(`លុប "${c}"?`)) return;
+    categories.splice(i, 1);
+    if (activeTab === c) activeTab = 'ទាំងអស់';
+    await saveCategories(); renderAdmin();
+  };
+
+  function renderAdminCatChips() {
+    document.getElementById('adminCatChips').innerHTML = categories.map((c, i) =>
+      `<div class="cat-chip">${c}<button class="cat-chip-del" onclick="window.deleteCat(${i})">✕</button></div>`
+    ).join('');
+  }
+
+  // Image drop zone for modal
+  const imgDropZone = document.getElementById('imgDropZone');
+  const modalFileInput = document.getElementById('modalFileInput');
+  imgDropZone.addEventListener('click', () => modalFileInput.click());
+  imgDropZone.addEventListener('dragover', e => { e.preventDefault(); imgDropZone.style.borderColor = 'var(--green-primary)'; });
+  imgDropZone.addEventListener('dragleave', () => { imgDropZone.style.borderColor = ''; });
+  imgDropZone.addEventListener('drop', e => {
+    e.preventDefault(); imgDropZone.style.borderColor = '';
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) handleImgFile(file);
+  });
+  modalFileInput.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (file) handleImgFile(file);
+    modalFileInput.value = '';
+  });
+  function handleImgFile(file) {
+    if (file.size > 5 * 1024 * 1024) { showToast('ទំហំអតិបរមា 5MB'); return; }
+    pendingImgFile = file;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      pendingImgPreview = ev.target.result;
+      imgDropZone.innerHTML = `<img src="${pendingImgPreview}"><div class="drop-hint">ចុចផ្លាស់ប្ដូររូប</div>`;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async function init() {
+    setLoading(true);
+    await loadCategories();
+    await loadItems();
+    setLoading(false);
+    showCustomer();
+  }
   init();
 </script>
 </body>
